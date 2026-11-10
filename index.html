@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#12050c">
+  <meta name="description" content="A soulful, deeply heartfelt and loving apology from Teja to Zainab Nawan Teja.">
+  <title>For My Zainab • From Teja With All My Heart</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Ambient Canvas for Petals & Starlight -->
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- ==============================================
+       1. THE LOVE ENVELOPE / ENTRANCE SCREEN
+       Unlocks audio and reveals website on user tap
+       ============================================== -->
+  <div id="entrance-gate" class="entrance-overlay" role="dialog" aria-modal="true" aria-label="A special message for Zainab">
+    <div class="entrance-card">
+      <div class="entrance-sparkles" aria-hidden="true">✨ 🌸 ✨</div>
+      <div class="envelope-icon-wrap" aria-hidden="true">
+        <div class="envelope-seal">💌</div>
+        <div class="floating-mini-heart">❤️</div>
+      </div>
+      
+      <p class="entrance-tag">CONFIDENTIAL & PRIVATE FOR</p>
+      <h1 class="entrance-title">Zainab Nawan Teja</h1>
+      <p class="entrance-from">From your biggest idiot & forever lover, <strong>Teja</strong></p>
+
+      <div class="entrance-message-box">
+        <p>Before you read this, take a gentle breath, turn up your volume or put your earphones on... I have a confession and a thousand apologies to make to the queen of my life.</p>
+      </div>
+
+      <button id="btn-unlock" class="btn-primary pulse-btn" aria-label="Open with music and love">
+        <span class="btn-icon">🎵</span>
+        <span class="btn-text">Open With Love & Music</span>
+        <span class="btn-glow"></span>
+      </button>
+
+      <p class="entrance-note">Tap to begin our romantic journey 🌹</p>
+    </div>
+  </div>
+
+
+  <!-- ==============================================
+       PERSISTENT FLOATING ROMANTIC MUSIC PLAYER
+       ============================================== -->
+  <div id="music-player-bar" class="floating-player hidden" role="region" aria-label="Romantic Love Playlist">
+    <div class="player-inner">
+      <div class="vinyl-disc" id="vinyl-disc" title="Love Playlist">
+        <img id="vinyl-art-img" src="assets/images/forehead-kiss.png" alt="Teja and Zainab" class="vinyl-art" width="46" height="46">
+        <div class="vinyl-center-hole"></div>
+      </div>
+      
+      <div class="player-info" id="player-info-toggle">
+        <div class="player-badge" id="player-track-badge">SONG 1 OF 2 • PUNJABI ROMANCE 🎧</div>
+        <div class="player-track" id="player-track-title">Khaab • Akhil</div>
+        <div class="player-lyric-snippet" id="player-lyric-snippet">"Main jadon tere vall takkeya..."</div>
+      </div>
+
+      <div class="player-controls">
+        <button id="btn-play-pause" class="icon-btn play-btn" aria-label="Play or pause love song">
+          <span id="play-icon">⏸️</span>
+        </button>
+        <button id="btn-next-track" class="icon-btn skip-btn" aria-label="Next song in playlist" title="Next Song">
+          <span>⏭️</span>
+        </button>
+        <button id="btn-hearts-shower" class="icon-btn heart-shower-btn" title="Shower Hearts!" aria-label="Shower floating hearts">
+          <span>💖</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Audio Progress Bar -->
+    <div class="audio-progress-bar" id="audio-progress-container">
+      <div class="audio-progress-fill" id="audio-progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Romantic Song Change Toast Notification -->
+  <div id="song-toast" class="song-toast-pill" role="status" aria-live="polite">
+    <span class="toast-icon">🎵</span>
+    <span id="song-toast-text" class="toast-text">Now Playing: Khaab • Akhil</span>
+  </div>
+
+  <!-- Audio Element (Managed by app.js playlist engine) -->
+  <audio id="bg-audio" preload="auto">
+    <source id="audio-source" src="audio/khaab-punjabi-love.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+
+  <!-- ==============================================
+       MAIN WEBSITE CONTENT (MOBILE-FOCUSED)
+       ============================================== -->
+  <main class="page-container">
+
+    <!-- HERO SECTION: THE APOLOGY -->
+    <header class="hero-section">
+      <div class="hero-alert-badge">
+        <span class="badge-dot"></span>
+        <span>MOST URGENT BOYFRIEND APOLOGY</span>
+      </div>
+
+      <h2 class="hero-cursive-sub">To My One, My Only, My Future</h2>
+      <h1 class="hero-main-title">
+        I’m So, So Sorry,<br>
+        <span class="highlight-name">Meri Jaan Zainab!</span>
+      </h1>
+
+      <p class="hero-lead">
+        Calling you <em>"sister"</em> was the single most ridiculous, brain-freezing, tongue-twisting blunder in human history! 😭💔
+      </p>
+
+      <!-- Romantic Centerpiece Card -->
+      <div class="hero-portrait-card">
+        <div class="portrait-image-wrapper">
+          <img src="assets/images/forehead-kiss.png" alt="Teja kissing Zainab on her forehead" class="hero-img" loading="eager" width="720" height="1280">
+          <div class="portrait-overlay-gradient"></div>
+          <div class="floating-caption">
+            <span class="caption-quote">"Look at how I love you. How could anyone ever call the queen of their universe a sister?!"</span>
+            <span class="caption-sub">— Forever Yours, Teja</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Love Counter -->
+      <div class="love-counter-box" id="love-counter">
+        <div class="counter-header">
+          <span class="counter-heart">💖</span>
+          <span class="counter-title">TIME SPENT FALLING DEEPER IN LOVE WITH YOU</span>
+          <span class="counter-heart">💖</span>
+        </div>
+        <div class="counter-grid">
+          <div class="counter-item"><span class="counter-num" id="count-days">1,500+</span><span class="counter-lbl">Days</span></div>
+          <div class="counter-item"><span class="counter-num" id="count-hours">36,000+</span><span class="counter-lbl">Hours</span></div>
+          <div class="counter-item"><span class="counter-num" id="count-mins">2,160,000+</span><span class="counter-lbl">Minutes</span></div>
+          <div class="counter-item"><span class="counter-num" id="count-secs">∞</span><span class="counter-lbl">Heartbeats</span></div>
+        </div>
+        <p class="counter-footnote">And every single second, you are my girlfriend, never anything else.</p>
+      </div>
+    </header>
+
+
+    <!-- SECTION: THE COURT OF LOVE -->
+    <section class="section-card court-section">
+      <div class="section-badge">⚖️ THE COURT OF LOVE • CASE #777</div>
+      <h2 class="section-heading">State of Love vs. Teja</h2>
+      <p class="section-intro">Presiding Judge: <strong>Her Royal Highness, Zainab Nawan Teja</strong></p>
+
+      <div class="court-docket">
+        <div class="docket-row">
+          <span class="docket-label">The Accused:</span>
+          <span class="docket-val">Teja (Boyfriend who had a major brain lag)</span>
+        </div>
+        <div class="docket-row">
+          <span class="docket-label">The Victim:</span>
+          <span class="docket-val">Zainab (Drop-dead gorgeous girlfriend, deeply offended)</span>
+        </div>
+        <div class="docket-row">
+          <span class="docket-label">The Charge:</span>
+          <span class="docket-val highlight-charge">Accidental utterance of the S-word ("Sister") to his true love.</span>
+        </div>
+        <div class="docket-row">
+          <span class="docket-label">The Plea:</span>
+          <span class="docket-val">Guilty of being a total idiot, but unconditionally in love!</span>
+        </div>
+      </div>
+
+      <!-- The Defense Explanation -->
+      <div class="defense-speech">
+        <div class="speech-quote-icon">“</div>
+        <p><strong>Your Honor Zainab,</strong></p>
+        <p>My defense is simple: I looked at your smile, my heart went into cardiac arrest, my neurons misfired, and a completely forbidden word escaped my mouth.</p>
+        <p>Look at you! No brother in the multiverse looks at a sister the way I gaze at you—with butterflies in my stomach, goosebumps on my skin, and a desire to hold your hand until my hair turns grey!</p>
+      </div>
+
+      <!-- Exhibit Gallery Cards -->
+      <div class="court-exhibits">
+        <h3 class="exhibit-title">Exhibits Presented to the Court:</h3>
+        
+        <div class="exhibit-card">
+          <div class="exhibit-badge">EXHIBIT A: PROOF OF ADORATION</div>
+          <img src="assets/images/zainab-flower-sun.png" alt="Zainab in golden sunlight" class="exhibit-img" loading="lazy">
+          <p class="exhibit-desc">Can anyone blame me for losing my mind when the woman I love looks like pure sunshine in human form?</p>
+        </div>
+
+        <div class="exhibit-card">
+          <div class="exhibit-badge">EXHIBIT B: THE LIFETIME PARTNERSHIP</div>
+          <img src="assets/images/onam-seated-pookkalam.png" alt="Teja and Zainab in matching traditional attire" class="exhibit-img" loading="lazy">
+          <p class="exhibit-desc">Look at us sitting together in traditional Kasavu. That is not siblings; that is an eternal love story written by destiny.</p>
+        </div>
+      </div>
+
+      <!-- Court Verdict -->
+      <div class="verdict-card">
+        <div class="verdict-stamp">OFFICIAL VERDICT</div>
+        <p class="verdict-text">
+          Teja is hereby sentenced to a <strong>Lifetime of Infinite Pampering</strong>:
+        </p>
+        <ul class="verdict-list">
+          <li>✨ Making morning elaichi tea on demand.</li>
+          <li>💖 100 kisses daily whenever Zainab is mad or pouts.</li>
+          <li>🍫 Regular deliveries of chocolates, biryani, and desserts.</li>
+          <li>🎶 Listening to Punjabi love songs together while sharing earphones.</li>
+          <li>🚫 Permanent ban on ever uttering the word "sister" to her again!</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- SECTION: SISTER VS ZAINAB (THE TRUTH) -->
+    <section class="section-card comparison-section">
+      <div class="section-badge">💡 CLARIFICATION OF THE CENTURY</div>
+      <h2 class="section-heading">Why You Could NEVER Be A Sister</h2>
+      <p class="section-intro">Here is the scientific, biological, and romantic proof:</p>
+
+      <div class="cards-duo">
+        <!-- Sister Side -->
+        <div class="compare-card compare-sister">
+          <div class="compare-icon">🙅‍♂️</div>
+          <h3 class="compare-title">What a Sister Does</h3>
+          <ul class="compare-list">
+            <li>Steals your hoodie and never returns it</li>
+            <li>Fights for the TV remote violently</li>
+            <li>Blackmails you to wash dishes</li>
+            <li>Zero romantic tension in 1,000 years</li>
+            <li>Definitely doesn't make your heart race</li>
+          </ul>
+        </div>
+
+        <!-- Zainab Side -->
+        <div class="compare-card compare-zainab">
+          <div class="compare-icon">👑</div>
+          <h3 class="compare-title">What Zainab Does to Me</h3>
+          <ul class="compare-list">
+            <li>Makes my heart skip a beat every time she texts</li>
+            <li>Gives hugs that make all my stress disappear</li>
+            <li>Makes morning tea that tastes like pure heaven</li>
+            <li>Looks like an angel from every single angle</li>
+            <li>The ONLY girl I want to marry and spend forever with</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="verdict-callout">
+        <p><strong>Conclusion:</strong> Zainab Nawan Teja is 1000% my girlfriend, soulmate, heartbeat, and future wife!</p>
+      </div>
+    </section>
+
+
+    <!-- SECTION: OUR COMIC MEMORIES CAROUSEL -->
+    <section class="section-card memories-section">
+      <div class="section-badge">📸 OUR BEAUTIFUL STORY</div>
+      <h2 class="section-heading">Moments That Prove We Belong Together</h2>
+      <p class="section-intro">Swipe or scroll through our most precious memories...</p>
+
+      <div class="memory-reel">
+
+        <!-- Story 1: Morning Tea & Kisses -->
+        <article class="memory-card">
+          <div class="memory-img-container">
+            <img src="assets/images/comic-morning-tea.png" alt="Morning elaichi tea and kiss" class="memory-img" loading="lazy">
+          </div>
+          <div class="memory-content">
+            <span class="memory-tag">CHAPTER 1 • MORNING SWEETNESS</span>
+            <h3 class="memory-title">"Elaichi Tea for My Favorite Person"</h3>
+            <p class="memory-body">
+              "Mornings are better when I start them with you, and days are perfect when they end with you. Have a beautiful day, my love."
+            </p>
+          </div>
+        </article>
+
+        <!-- Story 2: Sunset & Music -->
+        <article class="memory-card">
+          <div class="memory-img-container">
+            <img src="assets/images/comic-earphones-sunset.png" alt="Sharing earphones and guitar" class="memory-img" loading="lazy">
+          </div>
+          <div class="memory-content">
+            <span class="memory-tag">CHAPTER 2 • OUR FAVORITE SONG</span>
+            <h3 class="memory-title">"My Favorite Song Is Your Laugh"</h3>
+            <p class="memory-body">
+              "Sharing one pair of earphones, lost in melodies and quiet streets. End of the day, it's always you. Us, always."
+            </p>
+          </div>
+        </article>
+
+        <!-- Story 3: Cheeks & Laughter -->
+        <article class="memory-card">
+          <div class="memory-img-container">
+            <img src="assets/images/comic-camera-pinch.png" alt="Pinching cheeks and vintage camera" class="memory-img" loading="lazy">
+          </div>
+          <div class="memory-content">
+            <span class="memory-tag">CHAPTER 3 • SILLY & IN LOVE</span>
+            <h3 class="memory-title">"Smile Thoda Aur Madam!"</h3>
+            <p class="memory-body">
+              "You pinching my cheeks, teasing me, holding the camera... little moments that became the best memories of my life."
+            </p>
+          </div>
+        </article>
+
+        <!-- Story 4: Good Morning Sun -->
+        <article class="memory-card">
+          <div class="memory-img-container">
+            <img src="assets/images/comic-morning-sun.png" alt="Good morning sunshine" class="memory-img" loading="lazy">
+          </div>
+          <div class="memory-content">
+            <span class="memory-tag">CHAPTER 4 • WAKING UP TO YOU</span>
+            <h3 class="memory-title">"Thinking of You Already"</h3>
+            <p class="memory-body">
+              "Every morning sun reminds me of how bright you made my world. Grateful for every little thing with you."
+            </p>
+          </div>
+        </article>
+
+        <!-- Story 5: Street Ice Cream -->
+        <article class="memory-card">
+          <div class="memory-img-container">
+            <img src="assets/images/comic-street-icecream.png" alt="Ice cream and cafe talks" class="memory-img" loading="lazy">
+          </div>
+          <div class="memory-content">
+            <span class="memory-tag">CHAPTER 5 • SIMPLE HAPPINESS</span>
+            <h3 class="memory-title">"Coffee, Ice Cream & Endless Talks"</h3>
+            <p class="memory-body">
+              "No plan, just you and me. Feeding you ice cream, sketching our little cartoon characters, building a lifetime together."
+            </p>
+          </div>
+        </article>
+
+        <!-- Story 6: The Golden Goddess -->
+        <article class="memory-card">
+          <div class="memory-img-container">
+            <img src="assets/images/zainab-flower-reach.png" alt="Zainab reaching out her hand in the garden" class="memory-img" loading="lazy">
+          </div>
+          <div class="memory-content">
+            <span class="memory-tag">CHAPTER 6 • MY FOREVER ANGEL</span>
+            <h3 class="memory-title">"Take My Hand & Never Let Go"</h3>
+            <p class="memory-body">
+              "Even in a valley filled with a million flowers, my eyes will always search for you. You are my only home."
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+
+    <!-- SECTION: REAL PHOTO GALLERY -->
+    <section class="section-card gallery-section">
+      <div class="section-badge">✨ REAL MEMORIES</div>
+      <h2 class="section-heading">The Face That Owns My Soul</h2>
+      <p class="section-intro">Every side of you is pure magic to me:</p>
+
+      <div class="photo-mosaic">
+        <div class="mosaic-item mosaic-tall">
+          <img src="assets/images/zainab-kasavu-saree.png" alt="Zainab in Kasavu saree with sunlight" loading="lazy">
+          <div class="mosaic-caption">Goddess in Kasavu 🕊️</div>
+        </div>
+        <div class="mosaic-item">
+          <img src="assets/images/zainab-butterfly.jpg" alt="Zainab cute butterfly selfie" loading="lazy">
+          <div class="mosaic-caption">That cute smile 😍</div>
+        </div>
+        <div class="mosaic-item">
+          <img src="assets/images/teja-zainab-hug.png" alt="Teja and Zainab hugging warmth" loading="lazy">
+          <div class="mosaic-caption">My safe place 🫂</div>
+        </div>
+        <div class="mosaic-item">
+          <img src="assets/images/zainab-green-saree.png" alt="Zainab in royal green saree" loading="lazy">
+          <div class="mosaic-caption">Elegance personified 🌿</div>
+        </div>
+        <div class="mosaic-item mosaic-wide">
+          <img src="assets/images/onam-standing.png" alt="Teja and Zainab standing together in Onam traditional wear" loading="lazy">
+          <div class="mosaic-caption">Mr. & Mrs. Teja in the making 💫</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SECTION: SOULFUL PUNJABI LOVE & ROMANTIC QUOTES -->
+    <section class="section-card quotes-section">
+      <div class="section-badge">🌹 FROM THE DEPTHS OF MY HEART</div>
+      <h2 class="section-heading">Shayari For My Zainab</h2>
+
+      <div class="shayari-card">
+        <div class="punjabi-ornament" aria-hidden="true">ੴ &nbsp; • &nbsp; 🌺 &nbsp; • &nbsp; ੴ</div>
+        <blockquote class="punjabi-quote">
+          "Tere bina jeena vi koi jeena hai meri jaan?<br>
+          Tu hi mera sukoon ae, tu hi mera junoon ae.<br>
+          Tu hasdi ae te lagda ae jiven saari duniya roshan ho gayi."
+        </blockquote>
+        <p class="shayari-translation">
+          <em>(Without you, is this even a life my love? You are my peace, you are my passion. When you smile, it feels as if the whole world has lit up.)</em>
+        </p>
+      </div>
+
+      <div class="romantic-quotes-list">
+        <div class="quote-item">
+          <span class="quote-bullet">💫</span>
+          <p><strong>"Zainab Nawan Teja"</strong> — That name is not just words to me; it is my sacred vow, my favorite song, and the prayer on my lips every single day.</p>
+        </div>
+        <div class="quote-item">
+          <span class="quote-bullet">☕</span>
+          <p>I don't need fancy restaurants or grand parties. Just a cup of elaichi tea with you, your head on my shoulder, and our favorite Punjabi melody playing softly in the quiet night.</p>
+        </div>
+        <div class="quote-item">
+          <span class="quote-bullet">💍</span>
+          <p>I made a silly mistake by saying the wrong word, but my soul has never been confused: You are the only woman I will ever love, adore, and protect with my entire life.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         INTERACTIVE FORGIVENESS STATION
+         ============================================== -->
+    <section class="section-card interactive-station">
+      <div class="section-badge">🥺 THE MOMENT OF TRUTH</div>
+      <h2 class="section-heading">Madam Ji, Maan Jao Na?</h2>
+      <p class="section-intro">Adjust your anger level or make your verdict below:</p>
+
+      <!-- The Forgiveness Slider -->
+      <div class="slider-container">
+        <label for="forgive-slider" class="slider-label">
+          <span>Forgiveness Meter:</span>
+          <span id="slider-percentage" class="slider-val">50%</span>
+        </label>
+        <input type="range" id="forgive-slider" min="0" max="100" value="50" step="1" aria-label="Zainab's forgiveness slider">
+        
+        <div class="slider-emoji-feedback" id="slider-feedback-card">
+          <span class="feedback-emoji" id="feedback-emoji">🍕</span>
+          <p class="feedback-text" id="feedback-text">"Bring me chocolates, pizza, and 100 kisses first!"</p>
+        </div>
+      </div>
+
+      <!-- The Big Decision Buttons -->
+      <div class="decision-arena">
+        <p class="decision-prompt">Do you forgive your idiot boyfriend Teja?</p>
+        
+        <div class="decision-buttons-row">
+          <button id="btn-forgive-yes" class="btn-forgive-yes">
+            <span class="btn-icon">❤️</span>
+            <span>YES, I Forgive You!</span>
+          </button>
+
+          <button id="btn-forgive-no" class="btn-forgive-no">
+            <span>NO, Never! 😤</span>
+          </button>
+        </div>
+        <p class="runaway-hint" id="runaway-hint">Try clicking 'No' if you dare... 😉</p>
+      </div>
+
+      <!-- Virtual Hug & WhatsApp Message -->
+      <div class="virtual-actions-box">
+        <button id="btn-kiss-shower" class="btn-secondary">
+          <span>💋</span>
+          <span>Send Teja 100 Kisses</span>
+        </button>
+
+        <a id="btn-whatsapp-message" href="https://api.whatsapp.com/send?text=Hey%20Teja%20%E2%9D%A4%EF%B8%8F%20I%20saw%20your%20apology%20website...%20you%20are%20still%20an%20idiot%20for%20saying%20sister%20%F0%9F%98%82%20but%20I%20love%20you%20so%20much%20and%20I%20forgive%20you!" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+          <span>💬</span>
+          <span>Tell Teja on WhatsApp: "I Forgive You!"</span>
+        </a>
+      </div>
+    </section>
+
+
+    <!-- SECTION: TEJA'S HANDWRITTEN LOVE LETTER -->
+    <section class="section-card letter-section">
+      <div class="parchment-paper">
+        <div class="letter-stamp">💌 WITH ALL MY SOUL</div>
+        
+        <h2 class="letter-salutation">My Dearest Zainab,</h2>
+        
+        <div class="letter-body">
+          <p>
+            When that word slipped out of my mouth, my heart sank to my shoes. I wanted to build a time machine just to travel back 10 seconds and slap myself!
+          </p>
+          <p>
+            You are the most precious, gorgeous, intelligent, and pure-hearted person I have ever known. Since the day you entered my life, every color became brighter, every song made more sense, and every dream had your face in it.
+          </p>
+          <p>
+            Here are my 7 unbreakable vows to you, Zainab:
+          </p>
+          <ol class="vows-list">
+            <li><strong>The Tongue Guard:</strong> I will never, EVER use the word 'sister' anywhere near your name again!</li>
+            <li><strong>Your Morning Chai:</strong> Hot elaichi tea will always be made with extra love whenever you wake up.</li>
+            <li><strong>The Safe Harbor:</strong> Whenever life gets tough or overwhelming, my chest will always be your home to rest and cry.</li>
+            <li><strong>Your #1 Hype Man:</strong> I will always admire you in your sarees, compliment your beauty, and cheer for every dream of yours.</li>
+            <li><strong>The Listener:</strong> I will listen to every story, every rant, and every cute giggle without checking my phone.</li>
+            <li><strong>Laughs & Memories:</strong> We will keep having late-night ice cream, playing guitar under the stars, and making each other laugh till our stomachs hurt.</li>
+            <li><strong>Always & Forever:</strong> My heart beat will forever say: <em>Zainab Nawan Teja</em>.</li>
+          </ol>
+          <p>
+            Thank you for being my girlfriend, my best friend, my peace, and my everything.
+          </p>
+        </div>
+
+        <div class="letter-signoff">
+          <p class="signoff-words">Forever, hopelessly & madly in love with you,</p>
+          <p class="signoff-signature">Teja ❤️</p>
+          <div class="wax-seal" aria-hidden="true">SEALED WITH LOVE</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         SPECIAL INTIMATE ENDING: A LITTLE KID'S WHISPER TO HIS AMMA
+         ============================================== -->
+    <section class="section-card amma-kid-section" id="whisper-to-amma">
+      <div class="candle-glow-header" aria-hidden="true">
+        <span class="candle-icon">🕯️</span>
+        <span class="starlight-sparkle">✨</span>
+      </div>
+
+      <div class="amma-badge">A LITTLE KID'S WHISPER TO HIS WHOLE WORLD</div>
+      
+      <div class="amma-portrait-wrap">
+        <img src="assets/images/zainab-speech-hijab.jpg" alt="Zainab - My Amma, My Everything" class="amma-photo" loading="lazy">
+        <div class="amma-tag-overlay">A M M A 💖</div>
+      </div>
+
+      <div class="kid-voice-box">
+        <p class="kid-line-lead">Amma...</p>
+        
+        <p class="kid-line">
+          You are not just one thing to me. You are my <em>all</em>.
+        </p>
+
+        <p class="kid-line-roles">
+          You are my sister, my baba, my mama, my boyfriend, my girlfriend, my lover, my wifeyyyy, my grandfather, my grandmother... you are all of them to me. When I look at you, I see my entire universe.
+        </p>
+
+        <p class="kid-line-heart">
+          I just wanna say... from the deepest, purest corner of my soul: I want you with me in our future. I want to marry you, have our little kids, hold your hand through every storm, and live together until God separates us...
+        </p>
+
+        <div class="kid-tear-quote">
+          <p class="kid-pain">
+            "But deep down... we know all of it might not be real in this world..."
+          </p>
+          <p class="kid-love">
+            "Yet the love wanting you in my life? That is the most real, honest thing my heart has ever known."
+          </p>
+        </div>
+
+        <p class="kid-line-hope">
+          We may try with all our strength... and if God wants us together, He will make a way and it will happen.
+        </p>
+
+        <p class="kid-line-eternal">
+          And even if not... I will love you, hold you in my prayers, and remember every smile of yours until the very breath when God takes my soul back to Him.
+        </p>
+
+        <p class="kid-line-fight">
+          Sometimes I cry alone and fight with God: <em>'Why are we not together? Why didn't You do it for us...?'</em>
+        </p>
+
+        <p class="kid-closing-whisper">
+          You are my Amma, my Zainab, my life, my peace... forever and always, in this life and the next. 🥺❤️
+        </p>
+      </div>
+
+      <div class="kid-promise-badge">
+        <span>🕊️ Two Souls • One Unconditional Love • Beyond Everything</span>
+      </div>
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <p class="footer-quote">"Kinna chir tainu karda reha pyaar... tu te main, sadaa layi."</p>
+      <p class="footer-names">Teja &hearts; Zainab</p>
+      <p class="footer-date">Made with endless love, regret, and butterflies • Forever & Always</p>
+    </footer>
+
+  </main>
+
+
+  <!-- ==============================================
+       SUCCESS CELEBRATION MODAL (WHEN SHE FORGIVES)
+       ============================================== -->
+  <dialog id="forgive-modal" class="love-modal">
+    <div class="modal-card">
+      <button id="btn-close-modal" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      <div class="modal-emoji-burst">🎉 💖 👩‍❤️‍💋‍👨 🌸</div>
+      <h3 class="modal-title">SHE FORGAVE ME!</h3>
+      <p class="modal-subtitle">Madam Ji officially forgave her silly boyfriend!</p>
+      
+      <div class="modal-img-wrap">
+        <img src="assets/images/teja-zainab-hands.png" alt="Holding hands" class="modal-img">
+      </div>
+
+      <p class="modal-text">
+        Zainab, thank you for your big, beautiful heart! I promise to make you the happiest girl in this world every single day. Now come give me the biggest hug! ❤️
+      </p>
+
+      <button id="btn-modal-celebrate" class="btn-primary">
+        <span>Send Virtual Hug Back 🫂</span>
+      </button>
+    </div>
+  </dialog>
+
+
+  <!-- JavaScript App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
