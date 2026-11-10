@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const countMins = document.getElementById('count-mins');
   const countSecs = document.getElementById('count-secs');
 
-  // --- Playlist Configuration (Automatic 2-Song Sequence) ---
+  // --- Playlist Configuration (2-Song Sequence) ---
   const playlist = [
     {
       title: "Khaab • Akhil",
@@ -82,12 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTrackIndex = 0;
   let lyricIdx = 0;
   let lyricInterval = null;
+  let toastTimeout = null;
 
   function showSongToast(message) {
     if (!songToast || !songToastText) return;
     songToastText.textContent = message;
     songToast.classList.add('visible');
-    setTimeout(() => {
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
       songToast.classList.remove('visible');
     }, 4500);
   }
@@ -98,10 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTrack = playlist[currentTrackIndex];
     if (playerLyricSnippet && currentTrack.lyrics.length > 0) {
       playerLyricSnippet.textContent = currentTrack.lyrics[0];
+      playerLyricSnippet.style.opacity = '1';
     }
 
     lyricInterval = setInterval(() => {
-      if (!bgAudio.paused && playerLyricSnippet) {
+      if (bgAudio && !bgAudio.paused && playerLyricSnippet) {
         const track = playlist[currentTrackIndex];
         lyricIdx = (lyricIdx + 1) % track.lyrics.length;
         playerLyricSnippet.style.opacity = '0';
@@ -117,8 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
     currentTrackIndex = index % playlist.length;
     const track = playlist[currentTrackIndex];
 
-    bgAudio.src = track.src;
-    bgAudio.load();
+    if (bgAudio) {
+      bgAudio.src = track.src;
+      bgAudio.load();
+    }
 
     if (playerTrackBadge) playerTrackBadge.textContent = track.badge;
     if (playerTrackTitle) playerTrackTitle.textContent = track.title;
@@ -128,23 +133,44 @@ document.addEventListener('DOMContentLoaded', () => {
     startLyricRotation();
     showSongToast(`Now Playing: ${track.title}`);
 
-    if (autoPlay) {
+    if (autoPlay && bgAudio) {
       bgAudio.play().then(() => {
-        vinylDisc.classList.add('spinning');
-        playIcon.textContent = '⏸️';
+        if (vinylDisc) vinylDisc.classList.add('spinning');
+        if (playIcon) playIcon.textContent = '⏸️';
       }).catch(err => {
         console.log('Autoplay handled:', err);
       });
     }
   }
 
-  // When current song finishes, AUTOMATICALLY play next song!
-  bgAudio.addEventListener('ended', () => {
-    const nextIdx = (currentTrackIndex + 1) % playlist.length;
-    createFloatingBursts(20, '🎵');
-    createFloatingBursts(15, '💖');
-    loadTrack(nextIdx, true);
-  });
+  // --- Native Audio State Synchronization ---
+  if (bgAudio) {
+    bgAudio.addEventListener('play', () => {
+      if (vinylDisc) vinylDisc.classList.add('spinning');
+      if (playIcon) playIcon.textContent = '⏸️';
+    });
+
+    bgAudio.addEventListener('pause', () => {
+      if (vinylDisc) vinylDisc.classList.remove('spinning');
+      if (playIcon) playIcon.textContent = '▶️';
+    });
+
+    // When current song finishes, AUTOMATICALLY play 2nd song!
+    bgAudio.addEventListener('ended', () => {
+      const nextIdx = (currentTrackIndex + 1) % playlist.length;
+      createFloatingBursts(25, '🎵');
+      createFloatingBursts(20, '💖');
+      loadTrack(nextIdx, true);
+    });
+
+    // Track progress update
+    bgAudio.addEventListener('timeupdate', () => {
+      if (bgAudio.duration && audioProgressFill) {
+        const pct = (bgAudio.currentTime / bgAudio.duration) * 100;
+        audioProgressFill.style.width = `${pct}%`;
+      }
+    });
+  }
 
   // Next Track Button
   if (btnNextTrack) {
@@ -154,6 +180,35 @@ document.addEventListener('DOMContentLoaded', () => {
       loadTrack(nextIdx, true);
       createFloatingBursts(15, '✨');
     });
+  }
+
+  // Play / Pause Button
+  if (btnPlayPause && bgAudio) {
+    btnPlayPause.addEventListener('click', () => {
+      playPopSound();
+      if (bgAudio.paused) {
+        bgAudio.play();
+      } else {
+        bgAudio.pause();
+      }
+    });
+  }
+
+  // Seek on click or touch
+  function handleSeek(e) {
+    if (!audioProgressContainer || !bgAudio || !bgAudio.duration) return;
+    const rect = audioProgressContainer.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clickX = clientX - rect.left;
+    const width = rect.width;
+    if (width > 0) {
+      const clampedFraction = Math.max(0, Math.min(1, clickX / width));
+      bgAudio.currentTime = clampedFraction * bgAudio.duration;
+    }
+  }
+
+  if (audioProgressContainer) {
+    audioProgressContainer.addEventListener('click', handleSeek);
   }
 
   // --- Web Audio Synth for Interactive SFX ---
@@ -213,58 +268,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Unlock Website & Play Audio ---
-  btnUnlock.addEventListener('click', () => {
-    playSweetChime();
-    getAudioContext();
+  if (btnUnlock) {
+    btnUnlock.addEventListener('click', () => {
+      playSweetChime();
+      getAudioContext();
 
-    // Start background music with Track 1 (Khaab)
-    bgAudio.volume = 0.8;
-    loadTrack(0, true);
+      // Start background music with Track 1 (Khaab)
+      if (bgAudio) {
+        bgAudio.volume = 0.8;
+        loadTrack(0, true);
+      }
 
-    // Animate gate removal
-    entranceGate.classList.add('unlocked');
-    musicPlayerBar.classList.remove('hidden');
+      // Animate gate removal
+      if (entranceGate) entranceGate.classList.add('unlocked');
+      if (musicPlayerBar) musicPlayerBar.classList.remove('hidden');
 
-    // Trigger celebration hearts
-    createFloatingBursts(25, '🌸');
-    createFloatingBursts(20, '💖');
-  });
-  });
-
-  // --- Audio Player Controls ---
-  btnPlayPause.addEventListener('click', () => {
-    playPopSound();
-    if (bgAudio.paused) {
-      bgAudio.play();
-      vinylDisc.classList.add('spinning');
-      playIcon.textContent = '⏸️';
-    } else {
-      bgAudio.pause();
-      vinylDisc.classList.remove('spinning');
-      playIcon.textContent = '▶️';
-    }
-  });
-
-  // Track progress
-  bgAudio.addEventListener('timeupdate', () => {
-    if (bgAudio.duration) {
-      const pct = (bgAudio.currentTime / bgAudio.duration) * 100;
-      audioProgressFill.style.width = `${pct}%`;
-    }
-  });
-
-  // Seek on click
-  audioProgressContainer.addEventListener('click', (e) => {
-    const rect = audioProgressContainer.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    if (bgAudio.duration && width > 0) {
-      bgAudio.currentTime = (clickX / width) * bgAudio.duration;
-    }
-  });
+      // Trigger celebration hearts
+      createFloatingBursts(25, '🌸');
+      createFloatingBursts(20, '💖');
+    });
+  }
 
   // --- Relationship Time Counter ---
-  // Approximate start date of their sweet journey (October 2019 based on earliest memory in folder)
+  // Start date of their sweet journey (October 2019 based on memory archive)
   const loveStartDate = new Date('2019-10-04T00:00:00');
   function updateLoveTimer() {
     const now = new Date();
@@ -295,18 +321,20 @@ document.addEventListener('DOMContentLoaded', () => {
     { max: 100, emoji: '💖', text: '"I FORGIVE YOU, MY SILLY HERO! I LOVE YOU SO MUCH! ❤️"' }
   ];
 
-  forgiveSlider.addEventListener('input', (e) => {
-    const val = parseInt(e.target.value, 10);
-    sliderPercentage.textContent = `${val}%`;
+  if (forgiveSlider) {
+    forgiveSlider.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      if (sliderPercentage) sliderPercentage.textContent = `${val}%`;
 
-    const matchedMood = sliderMoods.find(m => val <= m.max) || sliderMoods[sliderMoods.length - 1];
-    feedbackEmoji.textContent = matchedMood.emoji;
-    feedbackText.textContent = matchedMood.text;
+      const matchedMood = sliderMoods.find(m => val <= m.max) || sliderMoods[sliderMoods.length - 1];
+      if (feedbackEmoji) feedbackEmoji.textContent = matchedMood.emoji;
+      if (feedbackText) feedbackText.textContent = matchedMood.text;
 
-    if (val === 100) {
-      triggerForgivenessSuccess();
-    }
-  });
+      if (val === 100) {
+        triggerForgivenessSuccess();
+      }
+    });
+  }
 
   // --- Runaway "No" Button (Playful interaction) ---
   const noButtonTexts = [
@@ -319,47 +347,66 @@ document.addEventListener('DOMContentLoaded', () => {
     'Nice try, Madam Ji! 😂'
   ];
   let noClicks = 0;
+  let lastDodgeTime = 0;
 
   function dodgeNoButton(e) {
-    if (e) e.preventDefault();
+    const now = Date.now();
+    if (now - lastDodgeTime < 180) return;
+    lastDodgeTime = now;
+
+    if (e && e.cancelable) e.preventDefault();
     playPopSound();
     noClicks++;
 
-    // Random displacement within reasonable bounds
-    const randomX = (Math.random() - 0.5) * 160;
-    const randomY = (Math.random() - 0.5) * 80;
+    // Random displacement within reasonable mobile bounds
+    const randomX = (Math.random() - 0.5) * 140;
+    const randomY = (Math.random() - 0.5) * 70;
 
-    btnForgiveNo.style.transform = `translate(${randomX}px, ${randomY}px) scale(0.9)`;
-    btnForgiveNo.textContent = noButtonTexts[noClicks % noButtonTexts.length];
+    if (btnForgiveNo) {
+      btnForgiveNo.style.transform = `translate(${randomX}px, ${randomY}px) scale(0.9)`;
+      btnForgiveNo.textContent = noButtonTexts[noClicks % noButtonTexts.length];
+    }
     
     // Make the YES button bigger and more enticing
-    const currentScale = 1 + Math.min(noClicks * 0.08, 0.4);
-    btnForgiveYes.style.transform = `scale(${currentScale})`;
+    if (btnForgiveYes) {
+      const currentScale = 1 + Math.min(noClicks * 0.08, 0.35);
+      btnForgiveYes.style.transform = `scale(${currentScale})`;
+    }
 
     if (runawayHint) {
       runawayHint.textContent = "See? Even the universe won't let you say No! 😘";
     }
   }
 
-  btnForgiveNo.addEventListener('mouseover', dodgeNoButton);
-  btnForgiveNo.addEventListener('touchstart', (e) => {
-    dodgeNoButton(e);
-  }, { passive: false });
-  btnForgiveNo.addEventListener('click', (e) => {
-    dodgeNoButton(e);
-  });
+  if (btnForgiveNo) {
+    btnForgiveNo.addEventListener('mouseover', dodgeNoButton);
+    btnForgiveNo.addEventListener('touchstart', (e) => {
+      dodgeNoButton(e);
+    }, { passive: false });
+    btnForgiveNo.addEventListener('click', (e) => {
+      dodgeNoButton(e);
+    });
+  }
 
   // --- "YES, I Forgive You" Action ---
   function triggerForgivenessSuccess() {
     playSweetChime();
-    forgiveSlider.value = 100;
-    sliderPercentage.textContent = '100%';
-    feedbackEmoji.textContent = '💖';
-    feedbackText.textContent = '"I FORGIVE YOU, MY SILLY HERO! I LOVE YOU SO MUCH! ❤️"';
+    if (forgiveSlider) forgiveSlider.value = 100;
+    if (sliderPercentage) sliderPercentage.textContent = '100%';
+    if (feedbackEmoji) feedbackEmoji.textContent = '💖';
+    if (feedbackText) feedbackText.textContent = '"I FORGIVE YOU, MY SILLY HERO! I LOVE YOU SO MUCH! ❤️"';
 
-    // Open Native Dialog
-    if (forgiveModal && typeof forgiveModal.showModal === 'function') {
-      forgiveModal.showModal();
+    // Open Native Dialog with safe fallback
+    if (forgiveModal) {
+      if (typeof forgiveModal.showModal === 'function') {
+        try {
+          if (!forgiveModal.open) forgiveModal.showModal();
+        } catch (e) {
+          forgiveModal.setAttribute('open', 'true');
+        }
+      } else {
+        forgiveModal.setAttribute('open', 'true');
+      }
     }
 
     // Huge Confetti and Heart Storm
@@ -369,35 +416,53 @@ document.addEventListener('DOMContentLoaded', () => {
     createFloatingBursts(25, '🌸');
   }
 
-  btnForgiveYes.addEventListener('click', () => {
-    triggerForgivenessSuccess();
-  });
+  if (btnForgiveYes) {
+    btnForgiveYes.addEventListener('click', () => {
+      triggerForgivenessSuccess();
+    });
+  }
 
   // Modal Close
-  btnCloseModal.addEventListener('click', () => {
-    playPopSound();
-    forgiveModal.close();
-  });
+  if (btnCloseModal && forgiveModal) {
+    btnCloseModal.addEventListener('click', () => {
+      playPopSound();
+      if (typeof forgiveModal.close === 'function') {
+        forgiveModal.close();
+      } else {
+        forgiveModal.removeAttribute('open');
+      }
+    });
+  }
 
-  btnModalCelebrate.addEventListener('click', () => {
-    playSweetChime();
-    forgiveModal.close();
-    createFloatingBursts(35, '🫂');
-    createFloatingBursts(35, '❤️');
-  });
+  if (btnModalCelebrate && forgiveModal) {
+    btnModalCelebrate.addEventListener('click', () => {
+      playSweetChime();
+      if (typeof forgiveModal.close === 'function') {
+        forgiveModal.close();
+      } else {
+        forgiveModal.removeAttribute('open');
+      }
+      createFloatingBursts(35, '🫂');
+      createFloatingBursts(35, '❤️');
+    });
+  }
 
   // --- Kisses & Hearts Floating Shower ---
-  btnKissShower.addEventListener('click', () => {
-    playPopSound();
-    createFloatingBursts(30, '💋');
-    createFloatingBursts(15, '❤️');
-  });
+  if (btnKissShower) {
+    btnKissShower.addEventListener('click', () => {
+      playPopSound();
+      createFloatingBursts(30, '💋');
+      createFloatingBursts(15, '❤️');
+    });
+  }
 
-  btnHeartsShower.addEventListener('click', () => {
-    playPopSound();
-    createFloatingBursts(25, '💖');
-    createFloatingBursts(15, '✨');
-  });
+  if (btnHeartsShower) {
+    btnHeartsShower.addEventListener('click', () => {
+      playPopSound();
+      createFloatingBursts(25, '💖');
+      createFloatingBursts(15, '✨');
+    });
+  }
 
   // --- Floating Emoji Particle Bursts ---
   function createFloatingBursts(count, emoji) {
@@ -438,14 +503,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
+    let isRunning = true;
 
     window.addEventListener('resize', () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     });
 
+    // Pause animation when tab is inactive to preserve battery on mobile
+    document.addEventListener('visibilitychange', () => {
+      isRunning = !document.hidden;
+      if (isRunning) renderLoop();
+    });
+
     const particles = [];
-    const maxParticles = 38;
+    const maxParticles = 36;
 
     class RomanticParticle {
       constructor() {
@@ -462,7 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
         this.spin = (Math.random() - 0.5) * 1.5;
         this.opacity = 0.25 + Math.random() * 0.55;
         this.type = Math.random() > 0.45 ? 'petal' : 'star';
-        // Palette: rose petal pink, crimson, warm gold
         const colors = [
           'rgba(255, 117, 140, ',
           'rgba(255, 77, 121, ',
@@ -489,7 +560,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = this.colorBase + this.opacity + ')';
 
         if (this.type === 'petal') {
-          // Draw curved rose petal
           ctx.beginPath();
           ctx.moveTo(0, -this.size);
           ctx.quadraticCurveTo(this.size * 1.3, -this.size * 0.4, this.size * 0.8, this.size);
@@ -498,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
           ctx.closePath();
           ctx.fill();
         } else {
-          // Draw soft glowing starlight particle
           ctx.beginPath();
           ctx.arc(0, 0, this.size * 0.4, 0, Math.PI * 2);
           ctx.fill();
@@ -509,11 +578,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (let i = 0; i < maxParticles; i++) {
       const p = new RomanticParticle();
-      p.y = Math.random() * height; // scatter initially
+      p.y = Math.random() * height;
       particles.push(p);
     }
 
     function renderLoop() {
+      if (!isRunning) return;
       ctx.clearRect(0, 0, width, height);
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
@@ -524,4 +594,3 @@ document.addEventListener('DOMContentLoaded', () => {
     renderLoop();
   }
 });
-
