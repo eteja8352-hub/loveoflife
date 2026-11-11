@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       title: "Khaab • Akhil",
       badge: "SONG 1 OF 2 • PUNJABI ROMANCE 🎧",
       src: "audio/khaab-punjabi-love.mp3",
+      fallbacks: ["audio/khaab.mp3"],
       cover: "assets/images/forehead-kiss.png",
       lyrics: [
         '"Main jadon tere vall takkeya..."',
@@ -65,7 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "Main Tumhara • Dil Bechara",
       badge: "SONG 2 OF 2 • FOR MY AMMA 🕊️",
-      src: "audio/Main_Tumhara_-_Dil_Bechara_Full_Song_Sushant-Sanjana_A._R._Rahman_Jonita-Hriday.mp3",
+      src: "audio/main-tumhara.mp3",
+      fallbacks: [
+        "audio/Main_Tumhara_-_Dil_Bechara_Full_Song_Sushant-Sanjana_A._R._Rahman_Jonita-Hriday.mp3",
+        "audio/Main_Tumhara_-_Dil_Bechara_Full_Song_Sushant-Sanjana_A._R._Rahman_Jonita-Hriday copy.mp3"
+      ],
       cover: "assets/images/zainab-speech-hijab.jpg",
       lyrics: [
         '"Tum na hue mere toh kya..."',
@@ -123,6 +128,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bgAudio) {
       bgAudio.src = track.src;
       bgAudio.load();
+
+      bgAudio.onerror = () => {
+        if (track.fallbacks && track.fallbacks.length > 0) {
+          const fallbackSrc = track.fallbacks.shift();
+          bgAudio.src = fallbackSrc;
+          bgAudio.load();
+          if (autoPlay) {
+            bgAudio.play().catch(e => console.log('Autoplay fallback:', e));
+          }
+        }
+      };
     }
 
     if (playerTrackBadge) playerTrackBadge.textContent = track.badge;
