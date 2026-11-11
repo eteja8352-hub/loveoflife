@@ -50,7 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
       title: "Khaab • Akhil",
       badge: "SONG 1 OF 2 • PUNJABI ROMANCE 🎧",
       src: "audio/khaab-punjabi-love.mp3",
-      fallbacks: ["audio/khaab.mp3"],
+      fallbacks: [
+        "audio/khaab.mp3",
+        "https://archive.org/download/KhaabAkhil_201902/Khaab-Akhil.mp3"
+      ],
       cover: "assets/images/forehead-kiss.png",
       lyrics: [
         '"Main jadon tere vall takkeya..."',
@@ -68,8 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       badge: "SONG 2 OF 2 • FOR MY AMMA 🕊️",
       src: "audio/main-tumhara.mp3",
       fallbacks: [
-        "audio/Main_Tumhara_-_Dil_Bechara_Full_Song_Sushant-Sanjana_A._R._Rahman_Jonita-Hriday.mp3",
-        "audio/Main_Tumhara_-_Dil_Bechara_Full_Song_Sushant-Sanjana_A._R._Rahman_Jonita-Hriday copy.mp3"
+        "audio/Main_Tumhara_-_Dil_Bechara_Full_Song_Sushant-Sanjana_A._R._Rahman_Jonita-Hriday.mp3"
       ],
       cover: "assets/images/zainab-speech-hijab.jpg",
       lyrics: [
@@ -124,14 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadTrack(index, autoPlay = true) {
     currentTrackIndex = index % playlist.length;
     const track = playlist[currentTrackIndex];
+    let fallbackIndex = 0;
 
     if (bgAudio) {
-      bgAudio.src = track.src;
-      bgAudio.load();
-
       bgAudio.onerror = () => {
-        if (track.fallbacks && track.fallbacks.length > 0) {
-          const fallbackSrc = track.fallbacks.shift();
+        if (track.fallbacks && fallbackIndex < track.fallbacks.length) {
+          const fallbackSrc = track.fallbacks[fallbackIndex++];
+          console.warn('Switching to fallback audio source:', fallbackSrc);
           bgAudio.src = fallbackSrc;
           bgAudio.load();
           if (autoPlay) {
@@ -139,6 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       };
+
+      const currentSrcPath = bgAudio.currentSrc || bgAudio.src || '';
+      if (!currentSrcPath.endsWith(track.src)) {
+        bgAudio.src = track.src;
+        bgAudio.load();
+      }
     }
 
     if (playerTrackBadge) playerTrackBadge.textContent = track.badge;
@@ -150,12 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
     showSongToast(`Now Playing: ${track.title}`);
 
     if (autoPlay && bgAudio) {
-      bgAudio.play().then(() => {
-        if (vinylDisc) vinylDisc.classList.add('spinning');
-        if (playIcon) playIcon.textContent = '⏸️';
-      }).catch(err => {
-        console.log('Autoplay handled:', err);
-      });
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          if (vinylDisc) vinylDisc.classList.add('spinning');
+          if (playIcon) playIcon.textContent = '⏸️';
+        }).catch(err => {
+          console.log('Autoplay state handled:', err);
+          if (playIcon) playIcon.textContent = '▶️';
+          if (vinylDisc) vinylDisc.classList.remove('spinning');
+        });
+      }
     }
   }
 
