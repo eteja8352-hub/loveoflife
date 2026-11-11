@@ -271,24 +271,60 @@ img {
 }
 
 /* ==========================================================================
-   FLOATING ROMANTIC MUSIC PLAYER (MOBILE-PERFECT)
+   AMBIENT BACKGROUND MUSIC BUTTON & FLOATING PLAYER
    ========================================================================== */
-.floating-player {
+.ambient-music-btn {
   position: fixed;
-  bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 1.75rem);
-  max-width: 440px;
-  z-index: 900;
-  background: rgba(22, 6, 16, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--card-border-glow);
-  border-radius: var(--radius-full);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 77, 121, 0.25);
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  top: max(1rem, env(safe-area-inset-top, 1rem));
+  right: max(1rem, env(safe-area-inset-right, 1rem));
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(26, 8, 20, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 133, 161, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 77, 121, 0.25);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, box-shadow 0.3s ease;
+  padding: 0;
+}
+
+.ambient-music-btn:hover {
+  transform: scale(1.08);
+  background: rgba(45, 14, 34, 0.9);
+  box-shadow: 0 6px 20px rgba(255, 77, 121, 0.45);
+}
+
+.ambient-music-btn:active {
+  transform: scale(0.95);
+}
+
+.ambient-music-btn.playing {
+  animation: pulseMusicBtn 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseMusicBtn {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 77, 121, 0.25);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 18px rgba(255, 77, 121, 0.6);
+  }
+}
+
+#audio-btn-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+  user-select: none;
+}
+
+.floating-player {
+  display: none !important;
 }
 
 .floating-player.hidden {
@@ -462,7 +498,7 @@ img {
 .page-container {
   max-width: 580px;
   margin: 0 auto;
-  padding: max(1.5rem, env(safe-area-inset-top, 1.5rem)) 1rem calc(5.5rem + env(safe-area-inset-bottom, 1rem));
+  padding: max(1.5rem, env(safe-area-inset-top, 1.5rem)) 1rem max(2rem, env(safe-area-inset-bottom, 2rem));
   position: relative;
   z-index: 2;
   display: flex;

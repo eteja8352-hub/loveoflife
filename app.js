@@ -1,6 +1,6 @@
 /* ==========================================================================
    LOVE OF LIFE • INTERACTIVE APOLOGY APPLICATION
-   Teja & Zainab Nawan Teja
+   Teja & Zainab Nawaz Teja
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const entranceGate = document.getElementById('entrance-gate');
   const btnUnlock = document.getElementById('btn-unlock');
   const bgAudio = document.getElementById('bg-audio');
+  const btnAudioToggle = document.getElementById('btn-audio-toggle');
+  const audioBtnIcon = document.getElementById('audio-btn-icon');
   const musicPlayerBar = document.getElementById('music-player-bar');
   const vinylDisc = document.getElementById('vinyl-disc');
   const vinylArtImg = document.getElementById('vinyl-art-img');
@@ -162,10 +164,14 @@ document.addEventListener('DOMContentLoaded', () => {
         playPromise.then(() => {
           if (vinylDisc) vinylDisc.classList.add('spinning');
           if (playIcon) playIcon.textContent = '⏸️';
+          if (audioBtnIcon) audioBtnIcon.textContent = '🎵';
+          if (btnAudioToggle) btnAudioToggle.classList.add('playing');
         }).catch(err => {
           console.log('Autoplay state handled:', err);
           if (playIcon) playIcon.textContent = '▶️';
           if (vinylDisc) vinylDisc.classList.remove('spinning');
+          if (audioBtnIcon) audioBtnIcon.textContent = '🔇';
+          if (btnAudioToggle) btnAudioToggle.classList.remove('playing');
         });
       }
     }
@@ -176,11 +182,21 @@ document.addEventListener('DOMContentLoaded', () => {
     bgAudio.addEventListener('play', () => {
       if (vinylDisc) vinylDisc.classList.add('spinning');
       if (playIcon) playIcon.textContent = '⏸️';
+      if (audioBtnIcon) audioBtnIcon.textContent = '🎵';
+      if (btnAudioToggle) {
+        btnAudioToggle.classList.add('playing');
+        btnAudioToggle.setAttribute('aria-label', 'Pause background music');
+      }
     });
 
     bgAudio.addEventListener('pause', () => {
       if (vinylDisc) vinylDisc.classList.remove('spinning');
       if (playIcon) playIcon.textContent = '▶️';
+      if (audioBtnIcon) audioBtnIcon.textContent = '🔇';
+      if (btnAudioToggle) {
+        btnAudioToggle.classList.remove('playing');
+        btnAudioToggle.setAttribute('aria-label', 'Play background music');
+      }
     });
 
     // When current song finishes, AUTOMATICALLY play 2nd song!
@@ -207,6 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const nextIdx = (currentTrackIndex + 1) % playlist.length;
       loadTrack(nextIdx, true);
       createFloatingBursts(15, '✨');
+    });
+  }
+
+  // Ambient Audio Toggle Button
+  if (btnAudioToggle && bgAudio) {
+    btnAudioToggle.addEventListener('click', () => {
+      playPopSound();
+      if (bgAudio.paused) {
+        bgAudio.play();
+      } else {
+        bgAudio.pause();
+      }
     });
   }
 
@@ -292,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gain.connect(ctx.destination);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.09);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // --- Unlock Website & Play Audio ---
@@ -372,7 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
     'Teja is too cute! 🥰',
     'Access Denied! 🚫',
     'You love me too much! ❤️',
-    'Nice try, Madam Ji! 😂'
+    'Nice try, Madam Ji! 😂',
+    'hey mumu try bay',
+    'eat dates and try again madam jii'
   ];
   let noClicks = 0;
   let lastDodgeTime = 0;
@@ -394,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btnForgiveNo.style.transform = `translate(${randomX}px, ${randomY}px) scale(0.9)`;
       btnForgiveNo.textContent = noButtonTexts[noClicks % noButtonTexts.length];
     }
-    
+
     // Make the YES button bigger and more enticing
     if (btnForgiveYes) {
       const currentScale = 1 + Math.min(noClicks * 0.08, 0.35);
